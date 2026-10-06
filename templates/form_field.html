@@ -1,0 +1,27 @@
+<div class="form-group">
+    <label for="{{ feat.name }}">{{ feat.label }}</label>
+
+    {% if feat.type == 'select' %}
+    <div class="select-wrapper">
+        <select name="{{ feat.name }}" id="{{ feat.name }}" required>
+            {% for val, text in feat.options %}
+            <option value="{{ val }}"
+                {% if feat.value is defined and feat.value == val %}selected
+                {% elif feat.value is not defined and feat.default == val %}selected{% endif %}>
+                {{ text }}
+            </option>
+            {% endfor %}
+        </select>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="select-arrow"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </div>
+
+    {% elif feat.type == 'number' %}
+    <input type="number"
+           name="{{ feat.name }}"
+           id="{{ feat.name }}"
+           min="{{ feat.min }}"
+           max="{{ feat.max }}"
+           value="{{ feat.value if feat.value is defined else feat.default }}"
+           required>
+    {% endif %}
+</div>

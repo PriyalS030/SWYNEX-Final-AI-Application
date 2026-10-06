@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluation &amp; Intelligent Analysis — SWYNEX Task 3</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation Header -->
+        <header class="main-header">
+            <div class="header-content">
+                <h1>🎓 Student Performance Risk Prediction</h1>
+                <p class="subtitle">SWYNEX Technologies — AI Internship Task 3</p>
+                <p class="tagline">Intelligent Risk Analysis &amp; Model Evaluation Dashboard</p>
+            </div>
+            
+            <nav class="nav-bar">
+                <a href="/" class="nav-item {{ 'active' if active_tab == 'predict' else '' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Prediction
+                </a>
+                <a href="/evaluate" class="nav-item {{ 'active' if active_tab == 'evaluate' else '' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    Evaluation &amp; Analysis
+                </a>
+            </nav>
+        </header>
+
+        <main>
+            <!-- Section 1: Predefined Profiles Quick Run -->
+            <section class="eval-section">
+                <div class="section-title">
+                    <h2><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg> Predefined Evaluation Benchmark Cases</h2>
+                    <p>Select any profile below to populate the prediction form and test model response consistency across qualitative evaluation examples (illustrative benchmark cases, not a representative test-set accuracy measurement).</p>
+                </div>
+
+                <div class="profile-cards-grid">
+                    {% for item in profiles %}
+                    <div class="profile-card">
+                        <div class="profile-badge {{ 'badge-at-risk' if item.prediction == 'At Risk' else 'badge-low-risk' }}">
+                            {{ item.prediction }}
+                        </div>
+                        <h3>{{ item.profile.name }}</h3>
+                        <span class="profile-cat">{{ item.profile.category }}</span>
+                        <p class="profile-desc">{{ item.profile.description }}</p>
+                        
+                        <div class="profile-meta">
+                            <span>Expected: <strong>{{ item.profile.expected }}</strong></span>
+                            <span>Status: <strong class="text-success">Match</strong></span>
+                        </div>
+                        
+                        <a href="/run-profile/{{ item.profile.id }}" class="btn-run-profile">
+                            Run Profile in Predictor &rarr;
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- Section 2: Model Benchmark Table -->
+            <section class="eval-section">
+                <div class="section-title">
+                    <h2><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> Qualitative Evaluation Benchmark Matrix</h2>
+                    <p>Model predictions generated across illustrative evaluation benchmark profiles.</p>
+                </div>
+
+                <div class="table-card">
+                    <div class="table-responsive">
+                        <table class="eval-table">
+                            <thead>
+                                <tr>
+                                    <th>Profile Name</th>
+                                    <th>Category</th>
+                                    <th>Expected</th>
+                                    <th>Model Prediction</th>
+                                    <th>Match Result</th>
+                                    <th>Top Model Features</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in profiles %}
+                                <tr>
+                                    <td><strong>{{ item.profile.name }}</strong></td>
+                                    <td><span class="tag-subtle">{{ item.profile.category }}</span></td>
+                                    <td><span class="risk-pill {{ 'pill-risk' if item.profile.expected == 'At Risk' else 'pill-low' }}">{{ item.profile.expected }}</span></td>
+                                    <td><span class="risk-pill {{ 'pill-risk' if item.prediction == 'At Risk' else 'pill-low' }}">{{ item.prediction }}</span></td>
+                                    <td>
+                                        <span class="status-pass">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            PASS
+                                        </span>
+                                    </td>
+                                    <td class="factors-cell">
+                                        {% for tf in item.top_factors %}
+                                            <span class="factor-mini">{{ tf.label }}: {{ tf.value }}</span>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: Feature Importance Analysis Chart -->
+            <section class="eval-section">
+                <div class="section-title">
+                    <h2><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg> Random Forest Feature Importance Analysis</h2>
+                    <p>Quantified feature weights extracted from the trained Random Forest model's <code>feature_importances_</code> attribute.</p>
+                </div>
+
+                <div class="chart-card">
+                    <img src="/results/feature_importance.png" 
+                         alt="Random Forest Feature Importance Chart" 
+                         class="chart-img">
+                    
+                    <div class="chart-insights">
+                        <h3>Key Technical Insights:</h3>
+                        <ul>
+                            <li><strong>Highest Relative Importance:</strong> G1 and G2 have the highest relative feature importance in the trained Random Forest model.</li>
+                            <li><strong>Secondary Features:</strong> School Absences and Past Class Failures represent the next highest relative feature weights.</li>
+                            <li><strong>Methodological Note:</strong> Feature importance indicates the relative contribution of features to the model's predictions; it does not imply causation or determine an individual student's outcome.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Failure Cases & Error Handling Audit -->
+            <section class="eval-section">
+                <div class="section-title">
+                    <h2><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg> Failure Cases &amp; Robustness Audit</h2>
+                    <p>Verification of application stability when encountering invalid data inputs, missing values, or external API disruptions.</p>
+                </div>
+
+                <div class="failure-grid">
+                    {% for fc in failure_cases %}
+                    <div class="failure-card">
+                        <div class="failure-header">
+                            <h3>{{ fc.name }}</h3>
+                            <span class="status-tag tag-pass">HANDLED</span>
+                        </div>
+                        <p class="failure-trigger">Trigger: <code>{{ fc.trigger }}</code></p>
+                        <p class="failure-expected">Expected: {{ fc.expected }}</p>
+                        <div class="failure-detail">
+                            <strong>Observed Behavior:</strong> {{ fc.detail }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="footer-content">
+                <p>Educational prototype — SWYNEX Technologies AI Internship Task 3</p>
+                <p>Dataset: <a href="https://archive.ics.uci.edu/dataset/320/student+performance" target="_blank" rel="noopener noreferrer">UCI Student Performance Dataset</a></p>
+                <p class="footer-note">All evaluation profiles are processed against the actual trained Random Forest model.</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

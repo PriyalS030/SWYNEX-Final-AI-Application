@@ -1,0 +1,85 @@
+=================================================================
+SWYNEX Task 3: Intelligent Risk Analysis & Evaluation Report
+=================================================================
+
+1. FEATURE IMPORTANCE RANKING (Random Forest)
+-----------------------------------------------------------------
+  Rank  1: Second Period Grade (G2)       | Weight: 0.4118
+  Rank  2: First Period Grade (G1)        | Weight: 0.2697
+  Rank  3: School Absences                | Weight: 0.0633
+  Rank  4: Past Failures                  | Weight: 0.0482
+  Rank  5: Going Out                      | Weight: 0.0400
+  Rank  6: Health Status                  | Weight: 0.0318
+  Rank  7: Free Time                      | Weight: 0.0297
+  Rank  8: Weekly Study Time              | Weight: 0.0243
+  Rank  9: School Support                 | Weight: 0.0173
+  Rank 10: Family Support                 | Weight: 0.0157
+  Rank 11: Extracurriculars               | Weight: 0.0153
+  Rank 12: Paid Extra Classes             | Weight: 0.0138
+  Rank 13: Home Internet                  | Weight: 0.0135
+  Rank 14: Desire Higher Ed               | Weight: 0.0056
+
+2. PREDEFINED EVALUATION PROFILE BENCHMARKS
+-----------------------------------------------------------------
+Profile: Consistent High Performer (Low-Risk Baseline)
+  Expected: Low Risk | Model Prediction: Low Risk
+  Match Status: PASS (Matches Expected)
+  Top Factor #1: Second Period Grade (G2) (17)
+  Top Factor #2: First Period Grade (G1) (16)
+  AI Explanation Status: Available (API Success)
+  AI Output: The model suggests a low risk of academic difficulty, likely influenced by your consistent attendance and lack of previous course failures. Your regular study time and access to support resources also appear to be positive factors in this assessment.
+
+Profile: Severely Struggling Student (At-Risk Baseline)
+  Expected: At Risk | Model Prediction: At Risk
+  Match Status: PASS (Matches Expected)
+  Top Factor #1: Second Period Grade (G2) (6)
+  Top Factor #2: First Period Grade (G1) (5)
+  AI Explanation Status: Available (API Success)
+  AI Output: The model flags this profile as "At Risk" primarily due to high absences and limited study time. These factors, combined with previous failures, are common indicators that suggest a student might benefit from additional academic support.
+
+Profile: Borderline Student (Mixed / Threshold Case)
+  Expected: At Risk | Model Prediction: At Risk
+  Match Status: PASS (Matches Expected)
+  Top Factor #1: Second Period Grade (G2) (9)
+  Top Factor #2: First Period Grade (G1) (10)
+  AI Explanation Status: Available (API Success)
+  AI Output: The model identified a higher risk based on factors such as the number of absences and study time. These indicators often suggest that additional support or adjustments to study habits could be beneficial. This prediction is a starting point for discussion, not a final determination of your academic future.
+
+Profile: High Grades but High Absences & Socializing (Behavioral Contradiction)
+  Expected: Low Risk | Model Prediction: Low Risk
+  Match Status: PASS (Matches Expected)
+  Top Factor #1: Second Period Grade (G2) (15)
+  Top Factor #2: First Period Grade (G1) (15)
+  AI Explanation Status: Available (API Success)
+  AI Output: The model predicts a low risk based on consistent grades and strong family support, which are generally positive indicators. However, the high number of absences is a factor that often warrants attention to ensure continued progress.
+
+Profile: Low Grades but High Study & High Support (Academic Contradiction)
+  Expected: At Risk | Model Prediction: At Risk
+  Match Status: PASS (Matches Expected)
+  Top Factor #1: Second Period Grade (G2) (8)
+  Top Factor #2: First Period Grade (G1) (7)
+  AI Explanation Status: Available (API Success)
+  AI Output: The model has flagged this profile as "At Risk," likely influenced by the combination of low initial grades and limited study time. This prediction suggests that increasing study hours or seeking additional academic support could help improve future performance, though it does not determine the final outcome.
+
+3. FAILURE CASE & ERROR HANDLING AUDIT
+-----------------------------------------------------------------
+Test Case: Missing Required Field (G1)
+  Trigger: G1 omitted
+  Expected: Catch ValueError & notify user
+  Result: PASSED — Caught error: 'Missing required field 'First Period Grade (G1)''
+
+Test Case: Out-of-Range Numeric Input (Absences=150)
+  Trigger: absences = 150
+  Expected: Catch range error
+  Result: PASSED — Caught error: ''Number of School Absences' must be between 0 and 93'
+
+Test Case: Invalid Non-Numeric Input ("abc")
+  Trigger: G1 = "abc"
+  Expected: Catch float conversion ValueError
+  Result: PASSED — Caught non-numeric value error
+
+Test Case: AI API Failure / Invalid Key Fallback
+  Trigger: Invalid API Key
+  Expected: Return user-friendly fallback text without app crash
+  Result: PASSED — Fallback triggered: 'The AI explanation is temporarily unavailable. Ple...'
+
